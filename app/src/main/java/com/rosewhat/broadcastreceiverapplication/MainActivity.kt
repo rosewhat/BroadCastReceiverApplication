@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ProgressBar
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.rosewhat.broadcastreceiverapplication.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private lateinit var progressBar: ProgressBar
+
     private var count = 0
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -31,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         binding.button.setOnClickListener {
             Intent(MyReceiver.ACTION_CLICKED).apply {
                 putExtra(MyReceiver.EXTRA_COUNT, count++)
-                sendBroadcast(this)
+                localBroadCastManager.sendBroadcast(this)
             }
 
         }
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             addAction(MyReceiver.ACTION_CLICKED)
             addAction(MyReceiver.LOADED)
         }
-        registerReceiver(receiver, intent)
+        localBroadCastManager.registerReceiver(receiver, intent)
         Intent(this, MyService::class.java).apply {
             startService(this)
         }
@@ -50,6 +52,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(receiver)
+        localBroadCastManager.unregisterReceiver(receiver)
     }
 }
